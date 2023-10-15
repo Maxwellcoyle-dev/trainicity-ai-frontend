@@ -1,0 +1,54 @@
+.container {
+  width: 100%;
+  row-gap: 0;
+}
+
+.listSeparator {
+  width: 100%;
+  padding: 0.5rem;
+  padding-left: 2rem;
+  background-color: #e6e6e6;
+  cursor: default;
+}
+
+.siderHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  padding-left: 2rem;
+  background-color: #e6e6e6;
+  cursor: default;
+}
+
+.menu {
+  overflow-y: auto;
+  height: calc(100vh - 100px);
+  max-height: calc(100vh - 112px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0);
+}
+
+/* For Webkit browsers like Chrome/Safari */
+.menu::-webkit-scrollbar {
+  width: 8px; /* Adjust width of scrollbar */
+}
+
+.menu::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px; /* Round the edges of the scrollbar */
+}
+
+.menu::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.7); /* Brighter color on hover */
+}
+
+.menu::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0); /* Background of the scrollbar track */
+}
+
+.spinDiv {
+  display: flex;
+  justify-content: center;
+  padding-top: 3rem;
+}
