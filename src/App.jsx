@@ -9,11 +9,15 @@ import styles from "./App.module.css";
 // Ant UI
 import { Layout } from "antd";
 
+// Amplify API
+import { withAuthenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
+
 // Custom Components
 import SidePanel from "./pages/SidePanel/SidePanel";
 import Main from "./pages/Main/Main";
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const App = () => {
   const [showNewThreadModal, setShowNewThreadModal] = useState(false);
@@ -53,4 +57,4 @@ const App = () => {
     </AppProvider>
   );
 };
-export default App;
+export default withAuthenticator(App);
