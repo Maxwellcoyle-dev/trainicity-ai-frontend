@@ -10,6 +10,14 @@
       "StackName": "amplify-frontendtai-dev-151219",
       "StackId": "arn:aws:cloudformation:us-east-2:950809776337:stack/amplify-frontendtai-dev-151219/edf78400-6c57-11ee-8596-0a54888ad3bd",
       "AmplifyAppId": "d11ampl9tih3ls"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d11ampl9tih3ls",
+          "type": "cicd"
+        }
+      }
     }
   }
 }
