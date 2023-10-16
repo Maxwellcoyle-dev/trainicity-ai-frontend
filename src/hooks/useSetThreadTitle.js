@@ -1,9 +1,6 @@
 // Custom Hooks
 import useGetThreads from "./useGetThreads";
 
-// Amplify API
-import { API, Auth } from "aws-amplify";
-
 const useSetThreadTitle = () => {
   const { getThreads } = useGetThreads();
 

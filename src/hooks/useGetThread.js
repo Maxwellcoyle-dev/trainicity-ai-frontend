@@ -4,8 +4,8 @@ import { useContext, useState } from "react";
 import { AppDispatchContext } from "../state/AppContext";
 import { GET_CURRENT_THREAD } from "../state/actions/actionTypes";
 
-// Amplify API
-import { API, Auth } from "aws-amplify";
+import { trainicityAIAPI } from "../constants";
+import axios from "axios";
 
 const useGetThread = () => {
   const [threadLoading, setThreadLoading] = useState(false);
@@ -13,19 +13,10 @@ const useGetThread = () => {
 
   const dispatch = useContext(AppDispatchContext);
 
-  const myAPI = `trainicityAiAPI`;
-  const path = `/getThread`;
-
   const getThread = async (threadID) => {
     setThreadLoading(true);
     setThreadError(false);
 
-    const user = await Auth.currentAuthenticatedUser(); // Get the current user
-    const userID = user.attributes.email; // Get the current user's email for userID
-    const token = user.signInUserSession.idToken.jwtToken; // Get the current user's token for authorization
-
-    if (!user) return console.log("No user"); // Check for an Authenticated User
-    if (!token) return console.log("No token"); // Check for a token
     if (!threadID) return console.log("No threadID"); // Check for a threadID
 
     const init = {
@@ -33,12 +24,10 @@ const useGetThread = () => {
         threadID: threadID,
         userID: userID,
       }),
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     };
 
-    API.post(myAPI, path, init)
+    axios
+      .post(`${trainicityAIAPI}/getThread`, init)
       .then((response) => {
         dispatch({ type: GET_CURRENT_THREAD, payload: response });
       })

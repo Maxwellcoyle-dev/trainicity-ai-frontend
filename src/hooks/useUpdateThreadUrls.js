@@ -3,9 +3,6 @@ import { useState } from "react";
 // Custom Hooks
 import useGetThread from "./useGetThread";
 
-// Amplify API
-import { API, Auth } from "aws-amplify";
-
 const useUpdateThreadUrls = () => {
   const [updateUrlListLoading, setUpdateUrlListLoading] = useState(false);
   const [updateUrlListError, setUpdateUrlListError] = useState(null);

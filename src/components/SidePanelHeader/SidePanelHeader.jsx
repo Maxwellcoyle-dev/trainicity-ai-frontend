@@ -1,8 +1,5 @@
 import React, { useEffect, useContext } from "react";
 
-// AWS
-import { Auth } from "aws-amplify";
-
 // Hooks
 import useGetUser from "../../hooks/useGetUser";
 

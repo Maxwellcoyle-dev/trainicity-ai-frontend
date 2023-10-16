@@ -9,9 +9,6 @@ import { ADD_MESSAGE, CREATE_NEW_THREAD } from "../state/actions/actionTypes";
 // Hooks
 import usePushCurrentThread from "./usePushCurrentThread";
 
-// Amplify API
-import { API, Auth } from "aws-amplify";
-
 const useOpenAIChat = () => {
   const [chatLoading, setChatLoading] = useState(false);
   const [chatError, setChatError] = useState(false);

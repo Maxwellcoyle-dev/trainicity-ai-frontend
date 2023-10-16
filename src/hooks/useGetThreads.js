@@ -4,11 +4,8 @@ import { useContext, useState } from "react";
 import { AppDispatchContext } from "../state/AppContext";
 import { SET_THREADS } from "../state/actions/actionTypes";
 
-// Amplify API
-import { API, Auth } from "aws-amplify";
-
-const myAPI = `trainicityAiAPI`;
-const path = `/getThreadsList`;
+import { trainicityAIAPI } from "../constants";
+import axios from "axios";
 
 const useGetThreads = () => {
   const [threadsExist, setThreadsExist] = useState(false);
@@ -18,25 +15,17 @@ const useGetThreads = () => {
   const dispatch = useContext(AppDispatchContext);
 
   const getThreads = async () => {
-    const user = await Auth.currentAuthenticatedUser();
-    if (!user) return console.log("No user"); // Check for an Authenticated User
-
     setThreadsLoading(true);
     setThreadsError(null);
 
-    const token = user.signInUserSession.idToken.jwtToken;
-
     const init = {
       body: {
-        userID: user.attributes.email,
-      },
-
-      headers: {
-        Authorization: `Bearer ${token}`,
+        userID: "max@trainicity.com",
       },
     };
 
-    API.post(myAPI, path, init)
+    axios
+      .post(`${trainicityAIAPI}/listThreads`, init)
       .then((response) => {
         if (response.length === 0) {
           setThreadsExist(false);

@@ -1,8 +1,5 @@
 import { useState } from "react";
 
-// Amplify API
-import { API, Auth } from "aws-amplify";
-
 // Custom Hooks
 import useGetThread from "./useGetThread";
 

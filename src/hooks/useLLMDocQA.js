@@ -3,8 +3,7 @@ import { useContext, useState } from "react";
 // Context & Actions
 import { AppStateContext } from "../state/AppContext";
 
-const URL =
-  "https://ol62tnwqr2jpnenz2t3lqwpnqm0fecjc.lambda-url.us-east-2.on.aws/";
+import { llmDocQAChat } from "../constants";
 
 const useLLMDocSum = () => {
   const [docQAResponse, setDocQAResponse] = useState("");
@@ -20,7 +19,7 @@ const useLLMDocSum = () => {
       if (fileKeyList.length < 1) return "No files";
       console.log(fileKeyList);
 
-      const response = await fetch(URL, {
+      const response = await fetch(llmDocQAChat, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

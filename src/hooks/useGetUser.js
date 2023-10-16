@@ -1,7 +1,6 @@
 import { useContext, useState } from "react";
 
-// Amplify API
-import { Auth } from "aws-amplify";
+
 
 // Context & Actions
 import { AppDispatchContext } from "../state/AppContext";

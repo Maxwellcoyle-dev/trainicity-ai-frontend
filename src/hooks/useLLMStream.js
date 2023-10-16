@@ -8,9 +8,7 @@ import { ADD_MESSAGE } from "../state/actions/actionTypes";
 // Hooks
 import usePushCurrentThread from "./usePushCurrentThread";
 
-// Stream URL - This is the URL for the AWS Lambda function that is running the model
-const url =
-  "https://2bqtiy2yixbxo6ofp2eoh3mqpq0bhxqf.lambda-url.us-east-2.on.aws/";
+import { llmStandardChat } from "../constants";
 
 const useLLMStream = () => {
   const [streamedResponse, setStreamedResponse] = useState("");
@@ -81,8 +79,10 @@ const useLLMStream = () => {
       ];
     }
 
+    console.log(currentMessageThread);
+
     try {
-      const response = await fetch(url, {
+      const response = await fetch(llmStandardChat, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
