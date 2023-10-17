@@ -39,10 +39,12 @@ const ChatContainer = ({ setShowTopBar, showTopBar }) => {
   // useEffect to scroll to last message
   useEffect(() => {
     if (!containerRef.current) return;
-    lastMessageRef?.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    if (!threadLoading) {
+      lastMessageRef?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   }, [currentThread]);
 
   const containerRef = useRef(null);
@@ -50,26 +52,28 @@ const ChatContainer = ({ setShowTopBar, showTopBar }) => {
 
   useEffect(() => {
     if (!containerRef.current) return;
-    const handleScroll = () => {
-      let st = containerRef.current.scrollTop;
-      const threshold = 5; // or whatever value works for you
+    if (!threadLoading) {
+      const handleScroll = () => {
+        let st = containerRef.current.scrollTop;
+        const threshold = 5; // or whatever value works for you
 
-      if (st > lastScrollTop + threshold) {
-        // DownScrolling
-        setShowTopBar(false);
-      } else if (st < lastScrollTop - threshold) {
-        // UpScrolling
-        setShowTopBar(true);
-      }
-      lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
-    };
+        if (st > lastScrollTop + threshold) {
+          // DownScrolling
+          setShowTopBar(false);
+        } else if (st < lastScrollTop - threshold) {
+          // UpScrolling
+          setShowTopBar(true);
+        }
+        lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
+      };
 
-    const currentContainer = containerRef.current;
-    currentContainer.addEventListener("scroll", handleScroll);
+      const currentContainer = containerRef.current;
+      currentContainer.addEventListener("scroll", handleScroll);
 
-    return () => {
-      currentContainer.removeEventListener("scroll", handleScroll);
-    };
+      return () => {
+        currentContainer.removeEventListener("scroll", handleScroll);
+      };
+    }
   }, [setShowTopBar]);
 
   const createNewThread = () => {
