@@ -1,24 +1,29 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 // Custom Hooks
 import useGetThread from "./useGetThread";
+
+// Context & Actions
+import { AppStateContext } from "../state/AppContext";
+
+import axios from "axios";
+import { trainicityAIAPI } from "../constants";
 
 const useFileUpload = () => {
   const [fileUploadLoading, setFileUploadLoading] = useState(false);
   const [fileUploadError, setFileUploadError] = useState(null);
 
-  const { getThread } = useGetThread();
+  const { user } = useContext(AppStateContext);
 
-  const myAPI = `trainicityAiAPI`;
-  const path = `/uploadFile`;
+  const { getThread } = useGetThread();
 
   let cancelUpload;
 
   const uploadFile = async (file, threadID) => {
-    const user = await Auth.currentAuthenticatedUser(); // Get the current user
-    const token = user.signInUserSession.idToken.jwtToken; // Get the current user's token for authorization
+    const userID = user?.userID; // Get the userID
+    const token = user?.token; // Get the token
 
-    if (!user) return console.log("No user"); // Check for an Authenticated User
+    if (!userID) return console.log("No user"); // Check for an Authenticated User
     if (!token) return console.log("No token"); // Check for a token
     if (!threadID) return console.log("No threadID"); // Check for a threadID
 
@@ -39,7 +44,7 @@ const useFileUpload = () => {
             fileData: base64Data,
             fileName: file.name,
             threadID: threadID,
-            userID: user.attributes.email,
+            userID: userID,
           }),
           headers: {
             "Content-Type": "application/json",
@@ -48,7 +53,10 @@ const useFileUpload = () => {
         };
 
         try {
-          const response = await API.post(myAPI, path, init);
+          const response = await axios.post(
+            `${trainicityAIAPI}/updloadFile`,
+            init
+          );
           console.log(response);
         } catch (error) {
           console.log(error);

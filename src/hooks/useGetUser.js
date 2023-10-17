@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 
-
-
 // Context & Actions
 import { AppDispatchContext } from "../state/AppContext";
 import { SET_USER } from "../state/actions/actionTypes";
+
+import { Auth } from "aws-amplify";
 
 const useGetUser = () => {
   const [userLoading, setUserLoading] = useState(true);

@@ -1,16 +1,22 @@
+import { useContext } from "react";
+
+// Context & Actions
+import { AppStateContext } from "../state/AppContext";
+
 // Custom Hooks
 import useGetThreads from "./useGetThreads";
+
+import axios from "axios";
+import { trainicityAIAPI } from "../constants";
 
 const useSetThreadTitle = () => {
   const { getThreads } = useGetThreads();
 
-  const myAPI = `trainicityAiAPI`;
-  const path = `/updateThreadTitle`;
+  const { user } = useContext(AppStateContext);
 
   const setTitle = async (threadId, newTitle) => {
-    const user = await Auth.currentAuthenticatedUser(); // Get the current user
-    const userID = user.attributes.email; // Get the current user's email for userID
-    const token = user.signInUserSession.idToken.jwtToken; // Get the current user's token for authorization
+    const userID = user?.userID; // Get the userID
+    const token = user?.token; // Get the token
 
     if (!user) return console.log("No user"); // Check for an Authenticated User
     if (!token) return console.log("No token"); // Check for a token
@@ -27,7 +33,8 @@ const useSetThreadTitle = () => {
       },
     };
 
-    API.post(myAPI, path, init)
+    axios
+      .post(`${trainicityAIAPI}/updateThreadTitle`, init)
       .then((response) => {
         console.log(response);
         getThreads();

@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 
 // Context & Actions
-import { AppDispatchContext } from "../state/AppContext";
+import { AppDispatchContext, AppStateContext } from "../state/AppContext";
 import { SET_THREADS } from "../state/actions/actionTypes";
 
 import { trainicityAIAPI } from "../constants";
@@ -12,30 +12,38 @@ const useGetThreads = () => {
   const [threadsLoading, setThreadsLoading] = useState(false);
   const [threadsError, setThreadsError] = useState(null);
 
+  const { user } = useContext(AppStateContext);
   const dispatch = useContext(AppDispatchContext);
 
   const getThreads = async () => {
     setThreadsLoading(true);
     setThreadsError(null);
 
+    const userID = user?.userID; // Get the userID
+    const token = user?.token; // Get the token
+
     const init = {
       body: {
-        userID: "max@trainicity.com",
+        userID: userID,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
     };
 
     axios
       .post(`${trainicityAIAPI}/listThreads`, init)
       .then((response) => {
-        if (response.length === 0) {
+        if (response.data.length === 0 || !response.data) {
           setThreadsExist(false);
           setThreadsLoading(false);
           return;
         }
 
+        console.log(response);
         setThreadsExist(true);
 
-        const mappedResponse = response.map((item) => {
+        const mappedResponse = response.data?.map((item) => {
           return {
             userID: item.UserID.S,
             threadID: item.ThreadID.S,

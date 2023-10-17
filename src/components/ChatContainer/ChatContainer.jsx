@@ -4,7 +4,12 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 import ChatMessage from "../ChatMessage/ChatMessage";
 
 // State Management
-import { AppStateContext } from "../../state/AppContext";
+import { AppStateContext, AppDispatchContext } from "../../state/AppContext";
+import {
+  RESET_CURRENT_THREAD,
+  SET_MODE,
+  SHOW_NEW_THREAD_MODAL,
+} from "../../state/actions/actionTypes";
 
 // Hooks
 import useGetThread from "../../hooks/useGetThread";
@@ -16,6 +21,8 @@ import { PlusOutlined } from "@ant-design/icons";
 
 const ChatContainer = ({ setShowTopBar, showTopBar }) => {
   const [updateThread, setUpdateThread] = useState(false);
+
+  const dispatch = useContext(AppDispatchContext);
 
   // Get threadLoading and threadError from useGetThread hook
   const { threadLoading } = useGetThread();
@@ -65,9 +72,17 @@ const ChatContainer = ({ setShowTopBar, showTopBar }) => {
     };
   }, [setShowTopBar]);
 
+  const createNewThread = () => {
+    dispatch({ type: RESET_CURRENT_THREAD });
+    dispatch({ type: SET_MODE, payload: "" });
+    dispatch({ type: SHOW_NEW_THREAD_MODAL });
+  };
+
   return mode === "" ? (
     <Flex style={{ height: "100vh" }} align="center" gap="middle">
-      <Button icon={<PlusOutlined />}>New Thread</Button>
+      <Button icon={<PlusOutlined />} onClick={createNewThread}>
+        New Thread
+      </Button>
       <Typography.Text strong>Or</Typography.Text>
       <Typography.Text>Choose a previous Thread to work with</Typography.Text>
     </Flex>

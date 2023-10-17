@@ -27,6 +27,8 @@ const usePushCurrentThread = () => {
   const pushThread = async () => {
     console.log("Pushing thread");
     console.log(threadData.currentThread);
+    const userID = threadData.user.userID; // Get the userID
+    const token = threadData.user.token; // Get the token
     const threadID = threadData.currentThread.threadID; // Get the current threadID
     const currentThreadMessages = threadData.currentThread.messages; // Get the current thread messages
     const threadTitle = threadData.currentThread.threadTitle; // Get the current thread title

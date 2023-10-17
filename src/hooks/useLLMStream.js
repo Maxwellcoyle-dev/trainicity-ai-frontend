@@ -81,15 +81,22 @@ const useLLMStream = () => {
 
     console.log(currentMessageThread);
 
+    const payload = {
+      messages: currentMessageThread,
+      instructions: state.threadData.currentThread?.instructions,
+    };
+
+    const init = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      signal,
+    };
+
     try {
-      const response = await fetch(llmStandardChat, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(currentMessageThread),
-        signal,
-      });
+      const response = await fetch(llmStandardChat, init);
 
       // set up reader to pipr stream into TextDecoderStream
       const reader = response.body

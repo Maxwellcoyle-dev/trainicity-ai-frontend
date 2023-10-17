@@ -7,6 +7,8 @@ import { AppDispatchContext, AppStateContext } from "../../state/AppContext";
 import {
   RESET_CURRENT_THREAD,
   SET_CURRENT_THREAD_ID,
+  SET_MODE,
+  SHOW_NEW_THREAD_MODAL,
 } from "../../state/actions/actionTypes";
 
 // Hooks
@@ -24,12 +26,12 @@ import SidePanelHeader from "../../components/SidePanelHeader/SidePanelHeader";
 
 const newThreadUUID = uuidv4();
 
-const SidePanel = ({ collapsed, setShowNewThreadModal }) => {
+const SidePanel = ({ collapsed }) => {
   const dispatch = useContext(AppDispatchContext);
+
+  // get Global State
   const state = useContext(AppStateContext);
   const threadData = state?.threadData;
-
-  // current threadID
   const currentThreadID = threadData?.currentThread?.threadID;
 
   const { getThreads, threadsLoading } = useGetThreads(); // Custom hook for getting all threads
@@ -42,8 +44,8 @@ const SidePanel = ({ collapsed, setShowNewThreadModal }) => {
 
   const createNewThread = () => {
     dispatch({ type: RESET_CURRENT_THREAD });
-    dispatch({ type: "SET_MODE", payload: "" });
-    setShowNewThreadModal(true);
+    dispatch({ type: SET_MODE, payload: "" });
+    dispatch({ type: SHOW_NEW_THREAD_MODAL });
   };
 
   const openThread = (threadID) => {

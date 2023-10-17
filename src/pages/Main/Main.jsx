@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 
 // Styles
 import styles from "./Main.module.css";
@@ -10,12 +10,22 @@ import ThreadAttachmentsModal from "../../components/ThreadAttachmentsModal/Thre
 import TopBar from "../../components/TopBar/TopBar";
 import NewThreadModal from "../../components/NewThreadModal/NewThreadModal";
 
+// Context & Actions
+import { AppStateContext } from "../../state/AppContext";
+
 const Main = ({
   setShowTopBar,
   showTopBar,
   setShowNewThreadModal,
   showNewThreadModal,
 }) => {
+  const state = useContext(AppStateContext);
+
+  // State Check
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
+
   return (
     <div className={styles.container}>
       <TopBar showTopBar={showTopBar} />

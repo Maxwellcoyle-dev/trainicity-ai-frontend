@@ -1,23 +1,27 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+
+// Context & Actions
+import { AppStateContext } from "../state/AppContext";
 
 // Custom Hooks
 import useGetThread from "./useGetThread";
+
+import axios from "axios";
+import { trainicityAIAPI } from "../constants";
 
 const useUpdateThreadUrls = () => {
   const [updateUrlListLoading, setUpdateUrlListLoading] = useState(false);
   const [updateUrlListError, setUpdateUrlListError] = useState(null);
 
+  const { user } = useContext(AppStateContext);
+
   const { getThread } = useGetThread();
 
-  const myAPI = `trainicityAiAPI`;
-  const path = `/updateThreadUrls`;
-
   const updateThreadUrls = async (urlList, threadID) => {
-    const user = await Auth.currentAuthenticatedUser(); // Get the current user
-    const userID = user.attributes.email; // Get the current user's email for userID
-    const token = user.signInUserSession.idToken.jwtToken; // Get the current user's token for authorization
+    const userID = user?.userID; // Get the userID
+    const token = user?.token; // Get the token
 
-    if (!user) return console.log("No user"); // Check for an Authenticated User
+    if (!userID) return console.log("No user"); // Check for an Authenticated User
     if (!urlList) return console.log("No urlList"); // Check for a urlList
     if (!threadID) return console.log("No threadID"); // Check for a threadID
 
@@ -37,7 +41,8 @@ const useUpdateThreadUrls = () => {
       };
 
       console.log("init: ", init);
-      API.post(myAPI, path, init)
+      axios
+        .post(`${trainicityAIAPI}`, init) // Add update URL endpoint after creation
         .then((response) => {
           console.log("response: ", response);
         })

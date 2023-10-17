@@ -27,6 +27,8 @@ export const SET_MODEL = "SET_MODEL";
 
 // Side Panel Actions
 
-// Attachments Modal Actions
+// Modal Actions
 export const SHOW_ATTACHMENT_MODAL = "SHOW_ATTACHMENT_MODAL";
 export const HIDE_ATTACHMENT_MODAL = "HIDE_ATTACHMENT_MODAL";
+export const SHOW_NEW_THREAD_MODAL = "SHOW_NEW_THREAD_MODAL";
+export const HIDE_NEW_THREAD_MODAL = "HIDE_NEW_THREAD_MODAL";

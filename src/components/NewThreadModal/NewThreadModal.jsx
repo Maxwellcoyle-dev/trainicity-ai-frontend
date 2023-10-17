@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 
 // Context & Actions
 import { AppStateContext, AppDispatchContext } from "../../state/AppContext";
+import { HIDE_NEW_THREAD_MODAL } from "../../state/actions/actionTypes";
 
 // Hooks
 import usePushCurrentThread from "../../hooks/usePushCurrentThread";
@@ -23,7 +24,7 @@ import { UploadOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
 
-const NewThreadModal = ({ setShowNewThreadModal, showNewThreadModal }) => {
+const NewThreadModal = () => {
   const [newThreadMode, setNewThreadMode] = useState(""); // ["Standard Chat", "Doc QA Chat"
   const [newTitle, setNewTitle] = useState("");
   const [newThreadInstructions, setNewThreadInstructions] = useState("");
@@ -33,6 +34,7 @@ const NewThreadModal = ({ setShowNewThreadModal, showNewThreadModal }) => {
   const dispatch = useContext(AppDispatchContext);
   const state = useContext(AppStateContext);
   const mode = state?.mode?.mode;
+  const showNewThreadModal = state.modal?.showNewThreadModal;
 
   const handleModeSelection = (mode) => {
     setNewThreadMode(mode);
@@ -41,7 +43,7 @@ const NewThreadModal = ({ setShowNewThreadModal, showNewThreadModal }) => {
 
   const handleCancel = () => {
     dispatch({ type: "SET_MODE", payload: "" });
-    setShowNewThreadModal(false);
+    dispatch({ type: HIDE_NEW_THREAD_MODAL });
   };
 
   const handleSetTitle = (e) => {
@@ -61,7 +63,7 @@ const NewThreadModal = ({ setShowNewThreadModal, showNewThreadModal }) => {
         threadInstructions: newThreadInstructions,
       },
     });
-    setShowNewThreadModal(false);
+    dispatch({ type: HIDE_NEW_THREAD_MODAL });
     setUpdateCurrentThread(true);
   };
 
