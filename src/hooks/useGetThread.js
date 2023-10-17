@@ -22,13 +22,14 @@ const useGetThread = () => {
     const userID = user?.userID; // Get the userID
     const token = user?.token; // Get the token
 
+    if (!userID) return console.log("No userID"); // Check for a userID
     if (!threadID) return console.log("No threadID"); // Check for a threadID
 
     const init = {
-      body: JSON.stringify({
+      body: {
         threadID: threadID,
         userID: userID,
-      }),
+      },
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -36,7 +37,9 @@ const useGetThread = () => {
     };
 
     axios
-      .post(`${trainicityAIAPI}/getThread`, init)
+      .post(`${trainicityAIAPI}/getThread`, init.body, {
+        headers: init.headers,
+      })
       .then((response) => {
         console.log("useGetThread response.data: ", response.data);
         dispatch({ type: GET_CURRENT_THREAD, payload: response.data });

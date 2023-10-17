@@ -41,8 +41,11 @@ const useUpdateThreadUrls = () => {
       };
 
       console.log("init: ", init);
+      // Add update URL endpoint after creation
       axios
-        .post(`${trainicityAIAPI}`, init) // Add update URL endpoint after creation
+        .post(`${trainicityAIAPI}`, init.body, {
+          headers: init.headers,
+        })
         .then((response) => {
           console.log("response: ", response);
         })

@@ -40,7 +40,13 @@ const useDeleteFile = () => {
     };
 
     try {
-      const response = await axios.post(`${trainicityAIAPI}/deleteFile`, init);
+      const response = await axios.post(
+        `${trainicityAIAPI}/deleteFile`,
+        init.body,
+        {
+          headers: init.headers,
+        }
+      );
       console.log(response);
     } catch (error) {
       console.log(error);

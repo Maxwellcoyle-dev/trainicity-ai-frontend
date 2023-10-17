@@ -40,12 +40,12 @@ const useFileUpload = () => {
         const base64Data = dataURL.split(",")[1];
 
         const init = {
-          body: JSON.stringify({
+          body: {
             fileData: base64Data,
             fileName: file.name,
             threadID: threadID,
             userID: userID,
-          }),
+          },
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -55,7 +55,10 @@ const useFileUpload = () => {
         try {
           const response = await axios.post(
             `${trainicityAIAPI}/updloadFile`,
-            init
+            init.body,
+            {
+              headers: init.headers,
+            }
           );
           console.log(response);
         } catch (error) {

@@ -22,19 +22,20 @@ const useSetThreadTitle = () => {
     if (!token) return console.log("No token"); // Check for a token
 
     const init = {
-      body: JSON.stringify({
+      body: {
         threadID: threadId,
         userID: userID,
         threadTitle: newTitle,
-      }),
-
+      },
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
 
     axios
-      .post(`${trainicityAIAPI}/updateThreadTitle`, init)
+      .post(`${trainicityAIAPI}/updateThreadTitle`, init.body, {
+        headers: init.headers,
+      })
       .then((response) => {
         console.log(response);
         getThreads();

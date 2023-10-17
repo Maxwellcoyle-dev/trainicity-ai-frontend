@@ -243,6 +243,7 @@ const threadReducer = (state = initialState, action) => {
       };
 
     case GET_CURRENT_THREAD:
+      console.log(action.payload);
       const newCurrentThread = {
         threadID: action.payload.ThreadID.S,
         threadTitle: action.payload.ThreadTitle.S,

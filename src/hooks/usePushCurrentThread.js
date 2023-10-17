@@ -15,7 +15,7 @@ const usePushCurrentThread = () => {
   const [updateCurrentThread, setUpdateCurrentThread] = useState(false);
 
   const { getThreads } = useGetThreads();
-  const { threadData } = useContext(AppStateContext);
+  const { threadData, user } = useContext(AppStateContext);
 
   useEffect(() => {
     if (updateCurrentThread) {
@@ -27,8 +27,8 @@ const usePushCurrentThread = () => {
   const pushThread = async () => {
     console.log("Pushing thread");
     console.log(threadData.currentThread);
-    const userID = threadData.user.userID; // Get the userID
-    const token = threadData.user.token; // Get the token
+    const userID = user.userID; // Get the userID
+    const token = user.token; // Get the token
     const threadID = threadData.currentThread.threadID; // Get the current threadID
     const currentThreadMessages = threadData.currentThread.messages; // Get the current thread messages
     const threadTitle = threadData.currentThread.threadTitle; // Get the current thread title
@@ -57,7 +57,9 @@ const usePushCurrentThread = () => {
     };
 
     axios
-      .post(`${trainicityAIAPI}/currentThread`, init)
+      .post(`${trainicityAIAPI}/currentThread`, init.body, {
+        headers: init.headers,
+      })
       .then((response) => {
         console.log(response);
         getThreads();

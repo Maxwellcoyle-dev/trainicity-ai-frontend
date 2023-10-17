@@ -25,10 +25,10 @@ const useDeleteThread = () => {
     if (!token) return console.log("No token"); // Check for a token
 
     const init = {
-      body: JSON.stringify({
+      body: {
         threadID: threadId,
         userID: userID,
-      }),
+      },
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -36,7 +36,9 @@ const useDeleteThread = () => {
     };
 
     axios
-      .post(`${trainicityAIAPI}/deleteThread`, init)
+      .post(`${trainicityAIAPI}/deleteThread`, init.body, {
+        headers: init.headers,
+      })
       .then((response) => {
         console.log(response);
         dispatch({ type: RESET_CURRENT_THREAD });

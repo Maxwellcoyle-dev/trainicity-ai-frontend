@@ -7,20 +7,22 @@ import { SET_THREADS } from "../state/actions/actionTypes";
 import { trainicityAIAPI } from "../constants";
 import axios from "axios";
 
+import { Auth } from "aws-amplify";
+
 const useGetThreads = () => {
   const [threadsExist, setThreadsExist] = useState(false);
   const [threadsLoading, setThreadsLoading] = useState(false);
   const [threadsError, setThreadsError] = useState(null);
 
-  const { user } = useContext(AppStateContext);
   const dispatch = useContext(AppDispatchContext);
 
   const getThreads = async () => {
     setThreadsLoading(true);
     setThreadsError(null);
 
-    const userID = user?.userID; // Get the userID
-    const token = user?.token; // Get the token
+    const user = await Auth.currentAuthenticatedUser();
+    const userID = user.attributes.email;
+    const token = user.signInUserSession.idToken.jwtToken;
 
     const init = {
       body: {
@@ -32,7 +34,9 @@ const useGetThreads = () => {
     };
 
     axios
-      .post(`${trainicityAIAPI}/listThreads`, init)
+      .post(`${trainicityAIAPI}/listThreads`, init.body, {
+        headers: init.headers,
+      })
       .then((response) => {
         if (response.data.length === 0 || !response.data) {
           setThreadsExist(false);
