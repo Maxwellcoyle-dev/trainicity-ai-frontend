@@ -10,7 +10,7 @@ import useSetThreadTitle from "../../hooks/useSetThreadTitle";
 import Text from "../Text/Text";
 
 // ANT Design Imports
-import { Input, Button, Space } from "antd";
+import { Input, Space } from "antd";
 import { EditOutlined, CloseOutlined } from "@ant-design/icons";
 
 // Styles
@@ -18,6 +18,9 @@ import styles from "./TopBarTitle.module.css";
 
 const TopBarTitle = () => {
   // threadData from State
+  const { mode } = useContext(AppStateContext);
+  const currentMode = mode?.ode;
+
   const { threadData } = useContext(AppStateContext);
   const currentThreadTitle = threadData?.currentThread?.threadTitle;
   const currentThreadID = threadData?.currentThread?.threadID;
@@ -64,13 +67,13 @@ const TopBarTitle = () => {
           />
           <CloseOutlined onClick={() => setEditTitle(false)} />
         </Space>
-      ) : currentThreadTitle ? (
-        <Space>
-          <Text text={currentThreadTitle} styleType="topBarTitle" />
-          <EditOutlined onClick={() => setEditTitle(true)} />
-        </Space>
       ) : (
-        <Button onClick={() => setEditTitle(true)}>Add Title</Button>
+        currentThreadTitle && (
+          <Space>
+            <Text text={currentThreadTitle} styleType="topBarTitle" />
+            <EditOutlined onClick={() => setEditTitle(true)} />
+          </Space>
+        )
       )}
     </Space>
   );
