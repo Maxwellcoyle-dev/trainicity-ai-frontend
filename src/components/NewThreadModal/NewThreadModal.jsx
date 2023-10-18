@@ -1,10 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 // Context & Actions
 import { AppStateContext, AppDispatchContext } from "../../state/AppContext";
 import {
   HIDE_NEW_THREAD_MODAL,
+  NEW_THREAD_ID,
   SHOW_ATTACHMENT_MODAL,
+  UPDATE_THREAD,
 } from "../../state/actions/actionTypes";
 
 // Hooks
@@ -59,7 +61,7 @@ const NewThreadModal = () => {
 
   const handleCreateThread = () => {
     dispatch({
-      type: "CREATE_NEW_THREAD",
+      type: UPDATE_THREAD,
       payload: {
         threadTitle: newTitle,
         threadMode: newThreadMode,
@@ -74,6 +76,12 @@ const NewThreadModal = () => {
   const handleAfterClose = () => {
     dispatch({ type: SHOW_ATTACHMENT_MODAL });
   };
+
+  useEffect(() => {
+    if (showNewThreadModal) {
+      dispatch({ type: NEW_THREAD_ID });
+    }
+  }, [showNewThreadModal]);
 
   return (
     <Modal

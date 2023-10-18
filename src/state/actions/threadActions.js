@@ -6,7 +6,8 @@ import {
   RESET_CURRENT_THREAD,
   SET_THREAD_TITLE,
   GET_CURRENT_THREAD,
-  CREATE_NEW_THREAD,
+  UPDATE_THREAD,
+  NEW_THREAD_ID,
   DELETE_THREAD,
   ADD_MESSAGE,
   ADD_MESSAGE_STREAM,
@@ -25,7 +26,14 @@ export const setThreads = (threads) => {
 
 export const createNewThread = (thread) => {
   return {
-    type: CREATE_NEW_THREAD,
+    type: UPDATE_THREAD,
+    thread,
+  };
+};
+
+export const NewThreadid = (thread) => {
+  return {
+    type: NEW_THREAD_ID,
     thread,
   };
 };

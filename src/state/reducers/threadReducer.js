@@ -8,7 +8,8 @@ import {
   DELETE_MESSAGE,
   EDIT_MESSAGE,
   RESET_CURRENT_THREAD,
-  CREATE_NEW_THREAD,
+  UPDATE_THREAD,
+  NEW_THREAD_ID,
   SET_CURRENT_THREAD_ID,
   GET_CURRENT_THREAD,
   SET_THREAD_TITLE,
@@ -32,14 +33,25 @@ export const initialState = {
 
 const threadReducer = (state = initialState, action) => {
   switch (action.type) {
-    case CREATE_NEW_THREAD:
+    case NEW_THREAD_ID:
+      const newThreadID = uuidv4();
+      // return currentThread with an updated ID
+      return {
+        ...state,
+        currentThread: {
+          ...state.currentThread,
+          threadID: newThreadID,
+        },
+      };
+
+    case UPDATE_THREAD:
       console.log(action.payload);
       // payload - threadTitle, threadMode, threadInstructions
       const givenTitle = action.payload.threadTitle;
-      const threadMode = action.payload.threadMode;
+      const threadMode =
+        action.payload.threadMode || state.currentThread.threadMode;
       const threadInstructions = action.payload.threadInstructions;
 
-      const newThreadID = uuidv4();
       // Set the lastUpdated and deafult title details
       const lastUpdated = Date.now().toString();
       const parsedTimestamp = parseInt(lastUpdated);
@@ -50,7 +62,7 @@ const threadReducer = (state = initialState, action) => {
       const defaultTitle = `${newTimestamp} ${newTime}`;
 
       const newThreadContent = {
-        threadID: newThreadID,
+        ...state.currentThread,
         threadTitle: givenTitle !== "" ? givenTitle : defaultTitle,
         lastUpdated,
         threadMode,

@@ -9,6 +9,7 @@ import {
   SET_CURRENT_THREAD_ID,
   SET_MODE,
   SHOW_NEW_THREAD_MODAL,
+  NEW_THREAD_ID,
 } from "../../state/actions/actionTypes";
 
 // Hooks

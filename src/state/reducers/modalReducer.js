@@ -3,11 +3,14 @@ import {
   HIDE_ATTACHMENT_MODAL,
   SHOW_NEW_THREAD_MODAL,
   HIDE_NEW_THREAD_MODAL,
+  SHOW_THREAD_SETTINGS_MODAL,
+  HIDE_THREAD_SETTINGS_MODAL,
 } from "../actions/actionTypes";
 
 const initialState = {
   showAttachmentModal: false,
   showNewThreadModal: false,
+  showThreadSettingsModal: false,
 };
 
 const modalReducer = (state = initialState, action) => {
@@ -43,6 +46,22 @@ const modalReducer = (state = initialState, action) => {
         showNewThreadModal: false,
       };
       return setNewThreadModalFalse;
+
+    case SHOW_THREAD_SETTINGS_MODAL:
+      // Set showThreadSettingsModal to true
+      const setThreadSettingsModalTrue = {
+        ...state,
+        showThreadSettingsModal: true,
+      };
+      return setThreadSettingsModalTrue;
+
+    case HIDE_THREAD_SETTINGS_MODAL:
+      // Set showThreadSettingsModal to false
+      const setThreadSettingsModalFalse = {
+        ...state,
+        showThreadSettingsModal: false,
+      };
+      return setThreadSettingsModalFalse;
 
     default:
       return state;
