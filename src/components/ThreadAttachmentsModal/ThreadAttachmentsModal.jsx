@@ -38,12 +38,15 @@ const ThreadAttachmentsModal = () => {
   const dispatch = useContext(AppDispatchContext);
 
   // Global State
-  const { threadData, showAttachmentModal } = useContext(AppStateContext);
+  const { threadData, modal } = useContext(AppStateContext);
 
   // Destructure threadID, currentThreadFiles, currentThreadUrls from threadData
   const threadID = threadData?.currentThread?.threadID;
   const currentThreadFiles = threadData?.currentThread?.files;
   const currentThreadUrls = threadData?.currentThread?.urls;
+
+  // Destructure showAttachmentModal from modal
+  const showAttachmentModal = modal?.showAttachmentModal;
 
   // Custom Hooks
   const { deleteFile, fileDeleteLoading, fileDeleteError } = useDeleteFile();

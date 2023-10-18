@@ -15,8 +15,8 @@ const modalReducer = (state = initialState, action) => {
     case SHOW_ATTACHMENT_MODAL:
       // Set showAttachmentModal to true
       const setAttachmentModalTrue = {
-        ...state,
         showAttachmentModal: true,
+        showNewThreadModal: false,
       };
       return setAttachmentModalTrue;
 

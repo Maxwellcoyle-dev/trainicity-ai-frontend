@@ -21,11 +21,6 @@ const Main = ({
 }) => {
   const state = useContext(AppStateContext);
 
-  // State Check
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
-
   return (
     <div className={styles.container}>
       <TopBar showTopBar={showTopBar} />

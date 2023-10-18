@@ -2,7 +2,10 @@ import React, { useContext, useState } from "react";
 
 // Context & Actions
 import { AppStateContext, AppDispatchContext } from "../../state/AppContext";
-import { HIDE_NEW_THREAD_MODAL } from "../../state/actions/actionTypes";
+import {
+  HIDE_NEW_THREAD_MODAL,
+  SHOW_ATTACHMENT_MODAL,
+} from "../../state/actions/actionTypes";
 
 // Hooks
 import usePushCurrentThread from "../../hooks/usePushCurrentThread";
@@ -64,11 +67,17 @@ const NewThreadModal = () => {
       },
     });
     dispatch({ type: HIDE_NEW_THREAD_MODAL });
+
     setUpdateCurrentThread(true);
+  };
+
+  const handleAfterClose = () => {
+    dispatch({ type: SHOW_ATTACHMENT_MODAL });
   };
 
   return (
     <Modal
+      afterClose={() => handleAfterClose}
       open={showNewThreadModal}
       onCancel={handleCancel}
       width="65%"
@@ -171,14 +180,18 @@ const NewThreadModal = () => {
                   instructions / Describe key context. (Optional)
                 </Typography.Text>
                 <TextArea
-                  value={newTitle}
+                  value={newThreadInstructions}
                   onChange={handleSetTitle}
                   autoSize={{
                     minRows: 3,
                     maxRows: 5,
                   }}
                 />
-                <Button type="primary" icon={<UploadOutlined />}>
+                <Button
+                  type="primary"
+                  onClick={handleCreateThread}
+                  icon={<UploadOutlined />}
+                >
                   Add Documents
                 </Button>
               </Space>
