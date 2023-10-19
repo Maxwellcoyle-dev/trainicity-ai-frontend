@@ -17,17 +17,15 @@ import ModeCard from "./ModeCard";
 import modeCardData from "./modeCardData.json";
 
 // Hooks
-import usePushCurrentThread from "../../hooks/usePushCurrentThread";
+import useUpdateThread from "../../hooks/useUpdateThread";
 
 // Ant Design
 import { Modal, Button, Input, Flex } from "antd";
 
 const NewThreadModal = () => {
   const [newThreadMode, setNewThreadMode] = useState(""); // ["Standard Chat", "Doc QA Chat"
-  const [newTitle, setNewTitle] = useState("");
-  const [newThreadInstructions, setNewThreadInstructions] = useState("");
 
-  const { setUpdateCurrentThread } = usePushCurrentThread();
+  const { setUpdateCurrentThread } = useUpdateThread();
 
   const dispatch = useContext(AppDispatchContext);
   const state = useContext(AppStateContext);
@@ -47,13 +45,20 @@ const NewThreadModal = () => {
     setNewThreadInstructions(e.target.value);
   };
 
-  const handleCreateThread = () => {
+  const handleCreateThread = (
+    urlList = [],
+    fileList = [],
+    newTitle,
+    newInstructions
+  ) => {
     dispatch({
       type: UPDATE_THREAD,
       payload: {
         threadTitle: newTitle,
         threadMode: newThreadMode,
-        threadInstructions: newThreadInstructions,
+        threadInstructions: newInstructions,
+        urls: urlList,
+        files: fileList,
       },
     });
     dispatch({ type: HIDE_NEW_THREAD_MODAL });
@@ -82,28 +87,26 @@ const NewThreadModal = () => {
       afterClose={() => handleAfterClose}
       open={showNewThreadModal}
       onCancel={handleCancel}
-      closeIcon={false}
-      width="fit-content"
+      width="60%"
       keyboard
       style={{ padding: "30px" }}
-      footer={[
-        <Button key="cancel" onClick={handleCancel}>
-          Cancel
-        </Button>,
-      ]}
+      footer={[]}
     >
       <Flex gap="middle" wrap>
         {mode === "" ? (
           modeCardData.map((item) => (
             <ModeCard
-              id={item.id}
+              key={item.id}
               modeName={item.mode}
               modeDescription={item.description}
               setNewThreadMode={setNewThreadMode}
             />
           ))
         ) : (
-          <NewThreadForm mode={newThreadMode} />
+          <NewThreadForm
+            mode={newThreadMode}
+            handleCreateThread={handleCreateThread}
+          />
         )}
       </Flex>
     </Modal>

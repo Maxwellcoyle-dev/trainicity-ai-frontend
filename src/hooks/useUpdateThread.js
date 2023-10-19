@@ -11,7 +11,7 @@ import { AppStateContext } from "../state/AppContext";
 // Amplify API
 import axios from "axios";
 
-const usePushCurrentThread = () => {
+const useUpdateThread = () => {
   const [updateCurrentThread, setUpdateCurrentThread] = useState(false);
 
   const { getThreads } = useGetThreads();
@@ -34,6 +34,8 @@ const usePushCurrentThread = () => {
     const threadTitle = threadData.currentThread.threadTitle; // Get the current thread title
     const threadMode = threadData.currentThread.threadMode; // Get the current thread mode
     const threadInstructions = threadData.currentThread.threadInstructions; // Get the current thread instructions
+    const threadUrls = threadData.currentThread.urls; // Get the current thread urls
+    const threadFiles = threadData.currentThread.files; // Get the current thread files
 
     if (!threadID) return console.log("No threadID"); // Check for a threadID
 
@@ -49,6 +51,8 @@ const usePushCurrentThread = () => {
         threadTitle,
         threadMode,
         threadInstructions,
+        urls: threadUrls,
+        files: threadFiles,
       },
 
       headers: {
@@ -57,7 +61,7 @@ const usePushCurrentThread = () => {
     };
 
     axios
-      .post(`${trainicityAIAPI}/currentThread`, init.body, {
+      .post(`${trainicityAIAPI}/updateThread`, init.body, {
         headers: init.headers,
       })
       .then((response) => {
@@ -74,4 +78,4 @@ const usePushCurrentThread = () => {
   };
 };
 
-export default usePushCurrentThread;
+export default useUpdateThread;

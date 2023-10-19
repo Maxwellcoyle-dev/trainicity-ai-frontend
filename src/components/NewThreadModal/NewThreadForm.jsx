@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 // Context & Actions
 import { AppStateContext, AppDispatchContext } from "../../state/AppContext";
@@ -7,9 +7,11 @@ import { HIDE_NEW_THREAD_MODAL } from "../../state/actions/actionTypes";
 // Custom Hooks
 import useFileUpload from "../../hooks/useFileUpload";
 import useDeleteFile from "../../hooks/useDeleteFile";
+import useUpdateThreadUrls from "../../hooks/useUpdateThreadUrls";
 
 // Ant Design
 import {
+  Avatar,
   Button,
   List,
   Flex,
@@ -18,13 +20,18 @@ import {
   Typography,
   Upload,
   Space,
-  Divider,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-const { Title, Text, Paragraph } = Typography;
+import {
+  UploadOutlined,
+  PlusCircleOutlined,
+  CloseCircleOutlined,
+  DeleteOutlined,
+  FileOutlined,
+} from "@ant-design/icons";
+const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const NewThreadForm = ({ mode }) => {
+const NewThreadForm = ({ mode, handleCreateThread }) => {
   // build an interchangable create new trhead form
   // optional data points can be input by user based on state.mode.mode
   // Data point options: Title, instructions, files, urls, large text input
@@ -34,8 +41,10 @@ const NewThreadForm = ({ mode }) => {
   const [titleValue, setTitleValue] = useState("");
   const [instructionsValue, setInstructionsValue] = useState("");
   const [fileList, setFileList] = useState([]);
+  const [urlInput, setUrlInput] = useState("");
   const [urlList, setUrlList] = useState([]);
   const [textContextValue, setTextContextValue] = useState("");
+  const [showUrlInput, setShowUrlInput] = useState(false);
 
   //   Global State - threadID / mode
   const { threadData } = useContext(AppStateContext);
@@ -43,22 +52,69 @@ const NewThreadForm = ({ mode }) => {
   //   Dispatch Global State Updates
   const dispatch = useContext(AppDispatchContext);
 
-  // destructure threadID + currentThreadFiles + currentMode from threadData
+  // destructure threadID + currentThreadFiles + currentThreadUrls + currentMode from threadData
   const threadID = threadData?.currentThread?.threadID;
   const currentThreadFiles = threadData?.currentThread?.files;
+  const currentThreadUrls = threadData?.currentThread?.urls;
   const currentMode = mode?.mode;
 
   //   import hooks useFileUpload, useUpdateThreadUrls
   const { uploadFile, fileUploadLoading } = useFileUpload();
   const { deleteFile, fileDeleteLoading, fileDeeleteError } = useDeleteFile();
+  const { updateThreadUrls, updateUrlListLoading, updateThreadUrlsError } =
+    useUpdateThreadUrls();
+
+  const handleFileListChange = (info) => {
+    console.log(info.fileList);
+
+    // Use originFileObj directly from the info.fileList objects
+    const filesToUpload = info.fileList.map(
+      (fileInfo) => fileInfo.originFileObj
+    );
+
+    // Upload array of files to s3
+    uploadFile(filesToUpload, threadID);
+
+    // If you still want to maintain the structure you had for fileList state:
+    const updatedFileList = info.fileList.map((fileInfo) => ({
+      file: fileInfo,
+    }));
+
+    setFileList(updatedFileList);
+  };
 
   const handleDeleteFile = (fileKey) => {
     console.log("fileId", fileKey);
     deleteFile(fileKey, threadID);
   };
 
+  const handleDeleteUrl = (url) => {
+    const newUrls = currentThreadUrls.filter((item) => item.url !== url);
+    updateThreadUrls(newUrls, threadID);
+    setUrlList(newUrls);
+  };
+
+  const handleAddUrl = () => {
+    setUrlList([...urlList, urlInput]);
+    setUrlInput("");
+    setShowUrlInput(false);
+  };
+
+  const handleCloseUrlInput = () => {
+    setShowUrlInput(false);
+    setUrlInput("");
+  };
+
+  const handleStartThread = () => {
+    handleCreateThread(urlList, fileList, titleValue, instructionsValue);
+  };
+
+  useEffect(() => {
+    console.log(fileList);
+  }, [fileList]);
+
   return (
-    <Form vertical style={{ paddingLeft: "30px", paddingRight: "30px" }}>
+    <Form style={{ paddingLeft: "30px", paddingRight: "30px", width: "100%" }}>
       {/* Title / Instructions */}
       <Title level={3}>{mode}</Title>
       <Flex
@@ -69,6 +125,7 @@ const NewThreadForm = ({ mode }) => {
       >
         <Text>Give your thread a title. (Optional)</Text>
         <Input
+          style={{ width: "50%" }}
           value={titleValue}
           onChange={(e) => setTitleValue(e.target.value)}
         />
@@ -93,36 +150,101 @@ const NewThreadForm = ({ mode }) => {
 
       {/* Files */}
       {mode === "Doc QA Chat" && (
-        <Flex vertical gap="small" style={{ paddingTop: "16px" }}>
-          <Upload
-            customRequest={({ file }) => uploadFile(file, threadID)}
-            fileList={fileList}
-          >
-            <Button icon={<UploadOutlined />}>Add File</Button>
-          </Upload>
-          <List
-            style={{ maxHeight: "175px", overflow: "auto" }}
-            bordered
-            loading={fileDeleteLoading || fileUploadLoading}
-            itemLayout="horizontal"
-            dataSource={currentThreadFiles}
-            renderItem={(item) => (
-              <List.Item
-                actions={[
-                  <Button onClick={() => handleDeleteFile(item.fileKey)}>
-                    <DeleteOutlined />
-                  </Button>,
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={<Avatar icon={<FileOutlined />} />}
-                  title={<Typography>{item.fileName}</Typography>}
+        <Flex
+          style={{ paddingTop: "16px", width: "100%" }}
+          justify="space-between"
+          gap="small"
+        >
+          <Flex vertical gap="small" style={{ width: "50%" }}>
+            <Upload
+              accept=".pdf,.doc,.docx,.txt"
+              multiple={true}
+              onChange={handleFileListChange}
+              fileList={fileList}
+            >
+              <Button icon={<UploadOutlined />}>Add File</Button>
+            </Upload>
+            <List
+              style={{ maxHeight: "175px", overflow: "auto" }}
+              bordered
+              loading={fileDeleteLoading || fileUploadLoading}
+              itemLayout="horizontal"
+              dataSource={currentThreadFiles}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Button onClick={() => handleDeleteFile(item.fileKey)}>
+                      <DeleteOutlined />
+                    </Button>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={<Avatar icon={<FileOutlined />} />}
+                    title={<Typography>{item.fileName}</Typography>}
+                  />
+                </List.Item>
+              )}
+            />
+          </Flex>
+          <Flex vertical gap="small" style={{ width: "50%" }}>
+            {showUrlInput ? (
+              <Space>
+                <Input
+                  onPressEnter={handleAddUrl}
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
                 />
-              </List.Item>
+                <Button
+                  icon={<PlusCircleOutlined />}
+                  type="text"
+                  onClick={handleAddUrl}
+                ></Button>
+                <Button
+                  icon={<CloseCircleOutlined />}
+                  type="text"
+                  danger
+                  onClick={handleCloseUrlInput}
+                ></Button>
+              </Space>
+            ) : (
+              <Button
+                icon={<PlusCircleOutlined />}
+                onClick={() => setShowUrlInput(true)}
+              >
+                Add URL
+              </Button>
             )}
-          />
+            <List
+              bordered
+              loading={updateUrlListLoading}
+              itemLayout="horizontal"
+              dataSource={urlList}
+              style={{ maxHeight: "175px", overflow: "auto" }}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Button onClick={() => handleDeleteUrl(item)}>
+                      <DeleteOutlined />
+                    </Button>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={<Avatar icon={<FileOutlined />} />}
+                    title={item}
+                  />
+                </List.Item>
+              )}
+            />
+          </Flex>
         </Flex>
       )}
+      <Button
+        onClick={handleStartThread}
+        type="primary"
+        style={{ marginTop: "30px" }}
+      >
+        Start Thread
+      </Button>
     </Form>
   );
 };
