@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "mode": "Standard Chat",
+    "description": "Use this for open ended conversations or work sessions with an ai assistant."
+  },
+  {
+    "id": 2,
+    "mode": "Doc QA Chat",
+    "description": "Use this for asking questions about a document or web page."
+  }
+]

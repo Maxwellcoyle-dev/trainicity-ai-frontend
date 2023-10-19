@@ -20,15 +20,15 @@ const useFileUpload = () => {
   let cancelUpload;
 
   const uploadFile = async (file, threadID) => {
+    setFileUploadLoading(true);
+    setFileUploadError(null);
+
     const userID = user?.userID; // Get the userID
     const token = user?.token; // Get the token
 
     if (!userID) return console.log("No user"); // Check for an Authenticated User
     if (!token) return console.log("No token"); // Check for a token
     if (!threadID) return console.log("No threadID"); // Check for a threadID
-
-    setFileUploadLoading(true);
-    setFileUploadError(null);
 
     try {
       const reader = new FileReader();
