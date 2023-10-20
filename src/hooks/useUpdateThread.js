@@ -6,16 +6,21 @@ import { trainicityAIAPI } from "../constants";
 import useGetThreads from "./useGetThreads";
 
 // Context & Actions
-import { AppStateContext } from "../state/AppContext";
+import { AppStateContext, AppDispatchContext } from "../state/AppContext";
+import { HIDE_NEW_THREAD_MODAL } from "../state/actions/actionTypes";
 
 // Amplify API
 import axios from "axios";
 
 const useUpdateThread = () => {
   const [updateCurrentThread, setUpdateCurrentThread] = useState(false);
+  const [updateThreadLoading, setUpdateThreadLoading] = useState(false);
+  const [updateThreadError, setUpdateThreadError] = useState(null);
 
   const { getThreads } = useGetThreads();
   const { threadData, user } = useContext(AppStateContext);
+
+  const dispatch = useContext(AppDispatchContext);
 
   useEffect(() => {
     if (updateCurrentThread) {
@@ -25,6 +30,9 @@ const useUpdateThread = () => {
   }, [updateCurrentThread]);
 
   const pushThread = async () => {
+    setUpdateThreadLoading(true);
+    setUpdateThreadError(null);
+
     console.log("Pushing thread");
     console.log(threadData.currentThread);
     const userID = user.userID; // Get the userID
@@ -67,14 +75,23 @@ const useUpdateThread = () => {
       .then((response) => {
         console.log(response);
         getThreads();
+        dispatch({ type: HIDE_NEW_THREAD_MODAL });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+        setUpdateThreadError(error);
+      })
+      .finally(() => {
+        setUpdateThreadLoading(false);
+      });
   };
 
   return {
     pushThread,
     setUpdateCurrentThread,
     updateCurrentThread,
+    updateThreadLoading,
+    updateThreadError,
   };
 };
 

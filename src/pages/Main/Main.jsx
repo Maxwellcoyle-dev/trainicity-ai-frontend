@@ -22,10 +22,6 @@ const Main = ({
 }) => {
   const state = useContext(AppStateContext);
 
-  useEffect(() => {
-    console.log(state);
-  }, [state.threadData.currentThread]);
-
   return (
     <div className={styles.container}>
       <TopBar showTopBar={showTopBar} />

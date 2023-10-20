@@ -5,7 +5,7 @@ import { AppStateContext, AppDispatchContext } from "../../state/AppContext";
 import {
   HIDE_NEW_THREAD_MODAL,
   NEW_THREAD_ID,
-  SHOW_ATTACHMENT_MODAL,
+  CLEAR_THREAD_ID,
   UPDATE_THREAD,
   SET_MODE,
 } from "../../state/actions/actionTypes";
@@ -20,61 +20,53 @@ import modeCardData from "./modeCardData.json";
 import useUpdateThread from "../../hooks/useUpdateThread";
 
 // Ant Design
-import { Modal, Button, Input, Flex } from "antd";
+import { Modal, Flex } from "antd";
 
 const NewThreadModal = () => {
   const [newThreadMode, setNewThreadMode] = useState(""); // ["Standard Chat", "Doc QA Chat"
 
-  const { setUpdateCurrentThread } = useUpdateThread();
+  const { setUpdateCurrentThread, updateThreadLoading } = useUpdateThread();
 
   const dispatch = useContext(AppDispatchContext);
   const state = useContext(AppStateContext);
   const mode = state?.mode?.mode;
   const showNewThreadModal = state.modal?.showNewThreadModal;
 
+  useEffect(() => {
+    if (updateThreadLoading) {
+      dispatch({ type: HIDE_NEW_THREAD_MODAL });
+    }
+  }, [updateThreadLoading]);
+
   const handleCancel = () => {
-    dispatch({ type: "SET_MODE", payload: "" });
+    dispatch({ type: SET_MODE, payload: "" });
     dispatch({ type: HIDE_NEW_THREAD_MODAL });
+    dispatch({ type: CLEAR_THREAD_ID });
   };
 
-  const handleSetTitle = (e) => {
-    setNewTitle(e.target.value);
-  };
-
-  const handleSetInstructions = (e) => {
-    setNewThreadInstructions(e.target.value);
-  };
-
-  const handleCreateThread = (
+  const handleCreateThread = async (
     urlList = [],
-    fileList = [],
     newTitle,
     newInstructions
   ) => {
-    dispatch({
-      type: UPDATE_THREAD,
-      payload: {
-        threadTitle: newTitle,
-        threadMode: newThreadMode,
-        threadInstructions: newInstructions,
-        urls: urlList,
-        files: fileList,
-      },
-    });
-    dispatch({ type: HIDE_NEW_THREAD_MODAL });
-
-    setUpdateCurrentThread(true);
-  };
-
-  const handleAfterClose = () => {
-    dispatch({ type: SHOW_ATTACHMENT_MODAL });
+    try {
+      console.log("threadMode: ", newThreadMode);
+      dispatch({
+        type: UPDATE_THREAD,
+        payload: {
+          threadTitle: newTitle,
+          threadMode: newThreadMode,
+          threadInstructions: newInstructions,
+          urls: urlList,
+        },
+      });
+      setUpdateCurrentThread(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // When the user clicks to start a thread - the mode is set to the mode of the thread
-  useEffect(() => {
-    console.log("newThreadMode", newThreadMode);
-    dispatch({ type: SET_MODE, payload: newThreadMode });
-  }, [newThreadMode]);
 
   useEffect(() => {
     if (showNewThreadModal) {
@@ -84,7 +76,6 @@ const NewThreadModal = () => {
 
   return (
     <Modal
-      afterClose={() => handleAfterClose}
       open={showNewThreadModal}
       onCancel={handleCancel}
       width="60%"

@@ -10,6 +10,7 @@ import {
   RESET_CURRENT_THREAD,
   UPDATE_THREAD,
   NEW_THREAD_ID,
+  CLEAR_THREAD_ID,
   SET_CURRENT_THREAD_ID,
   GET_CURRENT_THREAD,
   SET_THREAD_TITLE,
@@ -41,6 +42,15 @@ const threadReducer = (state = initialState, action) => {
         currentThread: {
           ...state.currentThread,
           threadID: newThreadID,
+        },
+      };
+
+    case CLEAR_THREAD_ID:
+      return {
+        ...state,
+        currentThread: {
+          ...state.currentThread,
+          threadID: "",
         },
       };
 
@@ -265,7 +275,7 @@ const threadReducer = (state = initialState, action) => {
       console.log(action.payload);
 
       const newCurrentThread = {
-        threadID: action.payload.ThreadID.S,
+        threadID: action.payload?.ThreadID?.S,
         threadTitle:
           action.payload.ThreadTitle?.S || state.currentThread.threadTitle,
         messages: action.payload?.Messages?.L?.map((message) => ({

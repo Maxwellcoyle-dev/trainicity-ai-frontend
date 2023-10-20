@@ -41,7 +41,6 @@ const useGetThread = () => {
         headers: init.headers,
       })
       .then((response) => {
-        console.log("useGetThread response.data: ", response.data);
         dispatch({ type: GET_CURRENT_THREAD, payload: response.data });
       })
       .catch((error) => {

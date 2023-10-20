@@ -74,13 +74,6 @@ const NewThreadForm = ({ mode, handleCreateThread }) => {
 
     // Upload array of files to s3
     uploadFile(filesToUpload, threadID);
-
-    // If you still want to maintain the structure you had for fileList state:
-    const updatedFileList = info.fileList.map((fileInfo) => ({
-      file: fileInfo,
-    }));
-
-    setFileList(updatedFileList);
   };
 
   const handleDeleteFile = (fileKey) => {
@@ -106,7 +99,7 @@ const NewThreadForm = ({ mode, handleCreateThread }) => {
   };
 
   const handleStartThread = () => {
-    handleCreateThread(urlList, fileList, titleValue, instructionsValue);
+    handleCreateThread(urlList, titleValue, instructionsValue);
   };
 
   useEffect(() => {
