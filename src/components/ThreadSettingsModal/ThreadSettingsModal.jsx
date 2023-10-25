@@ -7,74 +7,109 @@ import {
   UPDATE_THREAD,
 } from "../../state/actions/actionTypes";
 
+// Custom Hooks
+import useUpdateThreadUrls from "../../hooks/useUpdateThreadUrls";
+import useUpdateThread from "../../hooks/useUpdateThread";
+
 // Ant Design
 import { Modal } from "antd";
 
 // Custom Components
-import StandardChat from "./StandardChat";
+import ThreadSettingsForm from "./ThreadSettingsForm";
+
+const initialState = {
+  title: "",
+  instructions: "",
+  threadMode: "",
+  threadID: "",
+  threadFiles: [],
+  threadUrls: [],
+  threadLongContext: "",
+};
+
+const initialInputValueState = {
+  title: "",
+  instructions: "",
+  url: "",
+  file: "",
+};
 
 const ThreadSettingsModal = () => {
-  const [titleValue, setTitleValue] = useState("");
-  const [instructionsValue, setInstructionsValue] = useState("");
+  const [currentThreadState, setCurrentThreadState] = useState(initialState);
+  const [inputValues, setInputValues] = useState(initialInputValueState);
 
   const { threadData, modal } = useContext(AppStateContext);
 
-  const currentMode = threadData.currentThread?.threadMode;
   const showThreadSettingsModal = modal?.showThreadSettingsModal;
-
-  // destructure threadID + currentThreadFiles + currentThreadUrls + currentMode from threadData
-  const threadID = threadData?.currentThread?.threadID;
-  const currentThreadFiles = threadData?.currentThread?.files;
-  const currentThreadUrls = threadData?.currentThread?.urls;
-  const currentThreadTitle = threadData?.currentThread?.threadTitle;
 
   const dispatch = useContext(AppDispatchContext);
 
+  //  Destructure hooks useFileUpload, useUpdateThreadUrls, useDeleteFile
+  const { setUpdateCurrentThread } = useUpdateThread();
+
+  const { updateThreadUrls, updateUrlListLoading, updateThreadUrlsError } =
+    useUpdateThreadUrls();
+
+  // When the component mounts - set the currentThreadState to the threadDat +
   useEffect(() => {
-    localStorage.setItem(
-      "currentThreadState",
-      JSON.stringify(threadData?.currentThread)
-    );
-  }, []);
+    if (showThreadSettingsModal) {
+      console.log("threadData", threadData);
+      const updatedCurrentThreadState = {
+        title: threadData.currentThread?.threadTitle,
+        instructions: threadData.currentThread?.threadInstructions,
+        threadMode: threadData.currentThread?.threadMode,
+        threadID: threadData.currentThread?.threadID,
+        threadFiles: threadData.currentThread?.files,
+        threadUrls: threadData.currentThread?.urls,
+        threadLongContext: "",
+      };
+
+      setCurrentThreadState(updatedCurrentThreadState);
+    }
+  }, [showThreadSettingsModal, threadData]);
+
+  useEffect(() => {
+    console.log("currentThreadState title", currentThreadState.title);
+  }, [currentThreadState.title]);
 
   const handleClose = () => {
+    setInputValues(initialInputValueState);
     dispatch({ type: HIDE_THREAD_SETTINGS_MODAL });
   };
 
   const handleSubmit = () => {
-    const prevState = JSON.parse(localStorage.getItem("currentThreadState"));
-
-    dispatch({
-      type: UPDATE_THREAD,
-      payload: {
-        threadTitle: titleValue,
-        threadInstructions: instructionsValue,
-      },
-    });
-    dispatch({ type: HIDE_THREAD_SETTINGS_MODAL });
+    if (
+      threadData.currentThread.threadTitle !== currentThreadState.title ||
+      threadData.currentThread.threadInstructions !==
+        currentThreadState.instructions ||
+      threadData.currentThread.threadUrls !== currentThreadState.threadUrls
+    ) {
+      dispatch({
+        type: UPDATE_THREAD,
+        payload: {
+          threadTitle: currentThreadState.title,
+          threadInstructions: currentThreadState.instructions,
+          urls: currentThreadState.threadUrls,
+        },
+      });
+      setInputValues(initialInputValueState);
+      dispatch({ type: HIDE_THREAD_SETTINGS_MODAL });
+      setUpdateCurrentThread(true);
+    }
   };
-
-  useEffect(() => {
-    setTitleValue(currentThreadTitle);
-    setInstructionsValue(threadData?.currentThread?.threadInstructions);
-  }, [showThreadSettingsModal]);
 
   return (
     <Modal
       onCancel={handleClose}
       open={showThreadSettingsModal}
       onOk={handleSubmit}
+      centered
     >
-      <StandardChat
-        titleValue={titleValue}
-        setTitleValue={setTitleValue}
-        instructionsValue={instructionsValue}
-        setInstructionsValue={setInstructionsValue}
-        currentMode={currentMode}
-        threadID={threadID}
-        currentThreadFiles={currentThreadFiles}
-        currentThreadUrls={currentThreadUrls}
-        currentThreadTitle={currentThreadTitle}
+      <ThreadSettingsForm
+        currentThreadState={currentThreadState}
+        setCurrentThreadState={setCurrentThreadState}
+        inputValues={inputValues}
+        setInputValues={setInputValues}
       />
     </Modal>
   );

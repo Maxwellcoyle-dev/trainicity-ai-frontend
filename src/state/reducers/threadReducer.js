@@ -58,7 +58,8 @@ const threadReducer = (state = initialState, action) => {
       console.log("Update Thread payload: ", action.payload);
       // payload - threadTitle, threadMode, threadInstructions
       const givenTitle =
-        action.payload?.threadTitle || state.currentThread.title;
+        action.payload?.threadTitle || state.currentThread.threadTitle;
+      console.log("given title: ", givenTitle);
       const threadMode =
         action.payload?.threadMode || state.currentThread.threadMode;
       const threadInstructions =
@@ -283,14 +284,12 @@ const threadReducer = (state = initialState, action) => {
           content: message.M?.content?.S,
           messageID: message.M?.messageID?.S,
         })),
-        files: action.payload.Files?.L?.map((file) => ({
+        files: action.payload.ThreadFiles?.L?.map((file) => ({
           fileName: file?.M?.fileName?.S,
-          fileURL: file?.M?.fileURL?.S,
+          fileUrl: file?.M?.fileUrl?.S,
           fileKey: file?.M?.fileKey?.S,
         })),
-        urls: action.payload.URLs?.L?.map((url) => ({
-          url: url?.M?.url?.S,
-        })),
+        urls: action.payload.ThreadUrls?.L?.map((item) => item.S),
         lastUpdated:
           action.payload.LastUpdated?.S || state.currentThread.lastUpdated,
         threadMode:

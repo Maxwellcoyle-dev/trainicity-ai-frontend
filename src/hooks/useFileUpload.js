@@ -91,7 +91,7 @@ const useFileUpload = () => {
           return {
             fileName: file.data.fileName,
             fileKey: file.data.fileKey,
-            fileURL: file.data.fileURL,
+            fileUrl: file.data.fileUrl,
           };
         });
 

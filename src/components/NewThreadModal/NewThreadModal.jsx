@@ -18,6 +18,7 @@ import modeCardData from "./modeCardData.json";
 
 // Hooks
 import useUpdateThread from "../../hooks/useUpdateThread";
+import useDeleteFile from "../../hooks/useDeleteFile";
 
 // Ant Design
 import { Modal, Flex } from "antd";
@@ -26,11 +27,13 @@ const NewThreadModal = () => {
   const [newThreadMode, setNewThreadMode] = useState(""); // ["Standard Chat", "Doc QA Chat"
 
   const { setUpdateCurrentThread, updateThreadLoading } = useUpdateThread();
+  const { deleteFile, fileDeleteLoading, fileDeeleteError } = useDeleteFile();
 
   const dispatch = useContext(AppDispatchContext);
   const state = useContext(AppStateContext);
   const mode = state?.mode?.mode;
   const showNewThreadModal = state.modal?.showNewThreadModal;
+  const threadID = state.threadData?.currentThread?.threadID;
 
   useEffect(() => {
     if (updateThreadLoading) {
@@ -39,10 +42,24 @@ const NewThreadModal = () => {
   }, [updateThreadLoading]);
 
   const handleCancel = () => {
+    // if there are any files in the current thread, delete them
+    if (state.threadData.currentThread.files.length > 0) {
+      state.threadData.currentThread.files.forEach((file) => {
+        console.log("file: ", file);
+        console.log("threadID: ", threadID);
+        deleteFile(file.fileKey, threadID);
+      });
+    }
+
+    setNewThreadMode("");
     dispatch({ type: SET_MODE, payload: "" });
     dispatch({ type: HIDE_NEW_THREAD_MODAL });
     dispatch({ type: CLEAR_THREAD_ID });
   };
+
+  useEffect(() => {
+    console.log(state.threadData.currentThread);
+  }, [state]);
 
   const handleCreateThread = async (
     urlList = [],
@@ -78,13 +95,14 @@ const NewThreadModal = () => {
     <Modal
       open={showNewThreadModal}
       onCancel={handleCancel}
-      width="60%"
+      width="55%"
       keyboard
       style={{ padding: "30px" }}
-      footer={[]}
+      centered
+      footer={null}
     >
       <Flex gap="middle" wrap>
-        {mode === "" ? (
+        {newThreadMode === "" ? (
           modeCardData.map((item) => (
             <ModeCard
               key={item.id}
