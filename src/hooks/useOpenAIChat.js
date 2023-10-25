@@ -7,7 +7,7 @@ import { AppStateContext, AppDispatchContext } from "../state/AppContext";
 import { ADD_MESSAGE, CREATE_NEW_THREAD } from "../state/actions/actionTypes";
 
 // Hooks
-import usePushCurrentThread from "./usePushCurrentThread";
+import useUpdateThread from "./useUpdateThread";
 
 const useOpenAIChat = () => {
   const [chatLoading, setChatLoading] = useState(false);
@@ -16,7 +16,7 @@ const useOpenAIChat = () => {
   const state = useContext(AppStateContext);
   const dispatch = useContext(AppDispatchContext);
 
-  const { setUpdateCurrentThread } = usePushCurrentThread();
+  const { setUpdateCurrentThread } = useUpdateThread();
 
   const myAPI = `trainicityAiAPI`;
   const path = `/chatGPT4`;

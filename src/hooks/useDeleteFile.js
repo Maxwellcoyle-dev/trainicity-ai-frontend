@@ -21,6 +21,7 @@ const useDeleteFile = () => {
     const userID = user?.userID; // Get the userID
     const token = user?.token; // Get the token
 
+    if (!fileKey) return console.log("No fileKey"); // Check for a fileKey
     if (!userID) return console.log("No userID"); // Check for a userID
     if (!threadID) return console.log("No threadID"); // Check for a threadID
 
@@ -38,6 +39,8 @@ const useDeleteFile = () => {
         Authorization: `Bearer ${token}`,
       },
     };
+
+    console.log("init Body: ", init.body);
 
     try {
       const response = await axios.post(

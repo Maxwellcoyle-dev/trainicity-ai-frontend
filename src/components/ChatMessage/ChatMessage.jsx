@@ -7,7 +7,7 @@ import Markdown from "react-markdown";
 import gfm from "remark-gfm";
 
 // Hooks
-import usePushCurrentThread from "../../hooks/usePushCurrentThread";
+import useUpdateThread from "../../hooks/useUpdateThread";
 
 // State management
 import { AppDispatchContext } from "../../state/AppContext";
@@ -32,7 +32,7 @@ const ChatMessage = forwardRef(({ persona, chatMessage, messageID }, ref) => {
 
   const dispatch = useContext(AppDispatchContext);
 
-  const { setUpdateCurrentThread } = usePushCurrentThread();
+  const { setUpdateCurrentThread } = useUpdateThread();
 
   const handleEditToggle = () => {
     setIsEditable((prev) => !prev);

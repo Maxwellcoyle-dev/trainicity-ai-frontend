@@ -10,6 +10,9 @@ import {
   SHOW_THREAD_SETTINGS_MODAL,
 } from "../../state/actions/actionTypes";
 
+// Hooks
+import useGetThread from "../../hooks/useGetThread";
+
 // Ant Design
 import { Space, Button } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
@@ -26,6 +29,9 @@ const TopBarMenu = () => {
   // get the dispatch function
   const dispatch = useContext(AppDispatchContext);
 
+  // see if the thread update is loading
+  const { threadLoading } = useGetThread();
+
   const handleThreadSettingsClick = () => {
     if (showThreadSettingsModal) dispatch({ type: HIDE_THREAD_SETTINGS_MODAL });
     else if (!showThreadSettingsModal)
@@ -38,7 +44,7 @@ const TopBarMenu = () => {
 
   return (
     <Space>
-      {currentMode === "" ? (
+      {currentMode === "" || threadLoading ? (
         <Button icon={<SettingOutlined />} disabled></Button>
       ) : (
         <Button

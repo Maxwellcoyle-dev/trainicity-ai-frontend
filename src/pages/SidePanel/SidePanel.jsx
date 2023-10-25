@@ -9,7 +9,6 @@ import {
   SET_CURRENT_THREAD_ID,
   SET_MODE,
   SHOW_NEW_THREAD_MODAL,
-  NEW_THREAD_ID,
 } from "../../state/actions/actionTypes";
 
 // Hooks
@@ -25,7 +24,7 @@ import styles from "./SidePanel.module.css";
 // Components
 import SidePanelHeader from "../../components/SidePanelHeader/SidePanelHeader";
 
-const newThreadUUID = uuidv4();
+let newThreadUUID = "";
 
 const SidePanel = ({ collapsed }) => {
   const dispatch = useContext(AppDispatchContext);
@@ -41,7 +40,12 @@ const SidePanel = ({ collapsed }) => {
   // Get all threads from the database on component mount
   useEffect(() => {
     getThreads();
+    newThreadUUID = uuidv4();
   }, []);
+
+  useEffect(() => {
+    dispatch({ type: SET_MODE, payload: threadData.currentThread.threadMode });
+  }, [threadData.currentThread]);
 
   const createNewThread = () => {
     dispatch({ type: RESET_CURRENT_THREAD });
@@ -49,9 +53,12 @@ const SidePanel = ({ collapsed }) => {
     dispatch({ type: SHOW_NEW_THREAD_MODAL });
   };
 
-  const openThread = (threadID) => {
+  const openThread = (threadID, threadMode) => {
+    console.log("threadID: ", threadID);
+    console.log("threadMode: ", threadMode);
     getThread(threadID); // Get the thread from the database
     dispatch({ type: SET_CURRENT_THREAD_ID, payload: threadID });
+    dispatch({ type: SET_MODE, payload: threadMode });
   };
 
   return (
@@ -77,7 +84,7 @@ const SidePanel = ({ collapsed }) => {
             <Menu.Item
               key={thread.threadID}
               icon={<RightOutlined />}
-              onClick={() => openThread(thread.threadID)}
+              onClick={() => openThread(thread.threadID, thread.threadMode)}
             >
               {thread.threadTitle}
             </Menu.Item>

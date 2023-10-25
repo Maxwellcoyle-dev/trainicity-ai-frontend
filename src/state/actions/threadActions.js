@@ -8,6 +8,7 @@ import {
   GET_CURRENT_THREAD,
   UPDATE_THREAD,
   NEW_THREAD_ID,
+  CLEAR_THREAD_ID,
   DELETE_THREAD,
   ADD_MESSAGE,
   ADD_MESSAGE_STREAM,
@@ -34,6 +35,13 @@ export const createNewThread = (thread) => {
 export const NewThreadid = (thread) => {
   return {
     type: NEW_THREAD_ID,
+    thread,
+  };
+};
+
+export const ClearThreadid = (thread) => {
+  return {
+    type: CLEAR_THREAD_ID,
     thread,
   };
 };

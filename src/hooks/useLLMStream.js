@@ -6,7 +6,7 @@ import { AppStateContext, AppDispatchContext } from "../state/AppContext";
 import { ADD_MESSAGE } from "../state/actions/actionTypes";
 
 // Hooks
-import usePushCurrentThread from "./usePushCurrentThread";
+import useUpdateThread from "./useUpdateThread";
 
 import { llmStandardChat } from "../constants";
 
@@ -21,7 +21,7 @@ const useLLMStream = () => {
   const dispatch = useContext(AppDispatchContext);
 
   // define setUpdateCurrentThread to update the current thread after a message is recieved
-  const { setUpdateCurrentThread } = usePushCurrentThread();
+  const { setUpdateCurrentThread } = useUpdateThread();
 
   // Set up a one time unique id for the assistant message
   if (assistantMessageID === null) setAssistantMessageID(uuidv4());

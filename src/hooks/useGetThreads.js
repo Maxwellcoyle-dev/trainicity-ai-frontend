@@ -44,7 +44,6 @@ const useGetThreads = () => {
           return;
         }
 
-        console.log(response);
         setThreadsExist(true);
 
         const mappedResponse = response.data?.map((item) => {
@@ -57,7 +56,7 @@ const useGetThreads = () => {
         });
 
         setThreadsLoading(false);
-
+        console.log("useGetThreads mappedResponse", mappedResponse);
         dispatch({ type: SET_THREADS, payload: mappedResponse });
       })
       .catch((error) => {

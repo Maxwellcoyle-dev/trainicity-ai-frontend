@@ -10,6 +10,7 @@ import {
   RESET_CURRENT_THREAD,
   UPDATE_THREAD,
   NEW_THREAD_ID,
+  CLEAR_THREAD_ID,
   SET_CURRENT_THREAD_ID,
   GET_CURRENT_THREAD,
   SET_THREAD_TITLE,
@@ -44,13 +45,28 @@ const threadReducer = (state = initialState, action) => {
         },
       };
 
+    case CLEAR_THREAD_ID:
+      return {
+        ...state,
+        currentThread: {
+          ...state.currentThread,
+          threadID: "",
+        },
+      };
+
     case UPDATE_THREAD:
-      console.log(action.payload);
+      console.log("Update Thread payload: ", action.payload);
       // payload - threadTitle, threadMode, threadInstructions
-      const givenTitle = action.payload.threadTitle;
+      const givenTitle =
+        action.payload?.threadTitle || state.currentThread.threadTitle;
+      console.log("given title: ", givenTitle);
       const threadMode =
-        action.payload.threadMode || state.currentThread.threadMode;
-      const threadInstructions = action.payload.threadInstructions;
+        action.payload?.threadMode || state.currentThread.threadMode;
+      const threadInstructions =
+        action.payload?.threadInstructions ||
+        state.currentThread.threadInstructions;
+      const threadUrls = action.payload?.urls || state.currentThread.urls;
+      const threadFiles = action.payload?.files || state.currentThread.files;
 
       // Set the lastUpdated and deafult title details
       const lastUpdated = Date.now().toString();
@@ -67,8 +83,10 @@ const threadReducer = (state = initialState, action) => {
         lastUpdated,
         threadMode,
         threadInstructions,
+        urls: threadUrls,
+        files: threadFiles,
       };
-      console.log(newThreadContent);
+      console.log("new thread content: ", newThreadContent);
 
       return {
         ...state,
@@ -256,25 +274,29 @@ const threadReducer = (state = initialState, action) => {
 
     case GET_CURRENT_THREAD:
       console.log(action.payload);
+
       const newCurrentThread = {
-        threadID: action.payload.ThreadID.S,
-        threadTitle: action.payload.ThreadTitle.S,
-        messages: action.payload.Messages?.L?.map((message) => ({
+        threadID: action.payload?.ThreadID?.S,
+        threadTitle:
+          action.payload.ThreadTitle?.S || state.currentThread.threadTitle,
+        messages: action.payload?.Messages?.L?.map((message) => ({
           role: message.M?.role?.S,
           content: message.M?.content?.S,
           messageID: message.M?.messageID?.S,
         })),
-        files: action.payload.Files?.L?.map((file) => ({
+        files: action.payload.ThreadFiles?.L?.map((file) => ({
           fileName: file?.M?.fileName?.S,
-          fileURL: file?.M?.fileURL?.S,
+          fileUrl: file?.M?.fileUrl?.S,
           fileKey: file?.M?.fileKey?.S,
         })),
-        urls: action.payload.URLs?.L?.map((url) => ({
-          url: url?.M?.url?.S,
-        })),
-        lastUpdated: action.payload.LastUpdated.S,
-        threadMode: action.payload.ThreadMode.S,
-        threadInstructions: action.payload.ThreadInstructions.S,
+        urls: action.payload.ThreadUrls?.L?.map((item) => item.S),
+        lastUpdated:
+          action.payload.LastUpdated?.S || state.currentThread.lastUpdated,
+        threadMode:
+          action.payload.ThreadMode?.S || state.currentThread.threadMode,
+        threadInstructions:
+          action.payload?.ThreadInstructions?.S ||
+          state.currentThread.threadInstructions,
       };
 
       return {
