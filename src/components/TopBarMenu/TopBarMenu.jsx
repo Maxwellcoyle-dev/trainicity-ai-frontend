@@ -38,10 +38,6 @@ const TopBarMenu = () => {
       dispatch({ type: SHOW_THREAD_SETTINGS_MODAL });
   };
 
-  useEffect(() => {
-    console.log(showThreadSettingsModal);
-  }, []);
-
   return (
     <Space>
       {currentMode === "" || threadLoading ? (

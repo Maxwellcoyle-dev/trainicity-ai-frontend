@@ -105,7 +105,7 @@ const ChatContainer = ({ setShowTopBar, showTopBar }) => {
         currentThread.messages &&
         currentThread.messages.map((message, i) => (
           <ChatMessage
-            key={message.messageID}
+            key={i}
             persona={message.role}
             chatMessage={message.content}
             messageID={message.messageID}

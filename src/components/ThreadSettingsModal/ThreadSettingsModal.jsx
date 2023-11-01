@@ -53,7 +53,6 @@ const ThreadSettingsModal = () => {
   // When the component mounts - set the currentThreadState to the threadDat +
   useEffect(() => {
     if (showThreadSettingsModal) {
-      console.log("threadData", threadData);
       const updatedCurrentThreadState = {
         title: threadData.currentThread?.threadTitle,
         instructions: threadData.currentThread?.threadInstructions,
@@ -67,10 +66,6 @@ const ThreadSettingsModal = () => {
       setCurrentThreadState(updatedCurrentThreadState);
     }
   }, [showThreadSettingsModal, threadData]);
-
-  useEffect(() => {
-    console.log("currentThreadState title", currentThreadState.title);
-  }, [currentThreadState.title]);
 
   const handleClose = () => {
     setInputValues(initialInputValueState);
