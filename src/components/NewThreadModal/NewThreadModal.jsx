@@ -45,8 +45,6 @@ const NewThreadModal = () => {
     // if there are any files in the current thread, delete them
     if (state.threadData.currentThread.files.length > 0) {
       state.threadData.currentThread.files.forEach((file) => {
-        console.log("file: ", file);
-        console.log("threadID: ", threadID);
         deleteFile(file.fileKey, threadID);
       });
     }
@@ -57,17 +55,12 @@ const NewThreadModal = () => {
     dispatch({ type: CLEAR_THREAD_ID });
   };
 
-  useEffect(() => {
-    console.log(state.threadData.currentThread);
-  }, [state]);
-
   const handleCreateThread = async (
     urlList = [],
     newTitle,
     newInstructions
   ) => {
     try {
-      console.log("threadMode: ", newThreadMode);
       dispatch({
         type: UPDATE_THREAD,
         payload: {

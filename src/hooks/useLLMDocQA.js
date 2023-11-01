@@ -1,48 +1,78 @@
 import { useContext, useState } from "react";
 
 // Context & Actions
-import { AppStateContext } from "../state/AppContext";
+import { AppStateContext, AppDispatchContext } from "../state/AppContext";
+import { ADD_MESSAGE } from "../state/actions/actionTypes";
 
 import axios from "axios";
-import { llmDocQAChat } from "../constants";
+import { trainicityAIAPI } from "../constants";
 
 const useLLMDocSum = () => {
-  const [docQAResponse, setDocQAResponse] = useState("");
+  const [docQALoading, setDocQALoading] = useState(false);
+  const [docQAError, setDocQAError] = useState(null);
 
-  const state = useContext(AppStateContext);
-  const threadData = state.threadData;
-  const files = threadData?.currentThread.files;
+  const dispatch = useContext(AppDispatchContext);
 
-  let fileKeyList = [];
-  if (files) fileKeyList = files?.map((file) => file.fileKey);
+  const { threadData, user } = useContext(AppStateContext);
 
-  const fetchDocQA = async () => {
+  const fetchDocQA = async (userInput) => {
     try {
+      setDocQALoading(true);
+      setDocQAError(null);
+
+      const token = user?.token; // Get the token
+
+      const files = threadData?.currentThread.files;
+      console.log(threadData.currentThread);
+
+      let fileKeyList = [];
+      if (files) fileKeyList = files?.map((file) => file.fileKey);
+
       if (fileKeyList.length < 1) return "No files";
       console.log(fileKeyList);
 
       const currentThread = threadData?.currentThread;
       console.log(currentThread);
 
-      // const init = {
-      //   body: {
-      //     files: fileKeyList,
-      //     question: "What is the answer to life?",
-      //     userID: "123",
-      //     threadID: "456",
-      //   },
-      // };
+      dispatch({
+        type: ADD_MESSAGE,
+        payload: {
+          role: "user",
+          content: userInput,
+        },
+      });
 
-      // const response = await fetch(llmDocQAChat, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(fileKeyList),
-      // });
-      // const data = await response.json();
-      // setDocQAResponse(data);
-      // console.log(data);
+      const payload = {
+        files: fileKeyList,
+        question: userInput,
+        userID: user.userID,
+        threadID: currentThread.threadID,
+      };
+
+      axios
+        .post(`${trainicityAIAPI}/LLMDocQAChat`, payload, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          dispatch({
+            type: ADD_MESSAGE,
+            payload: {
+              role: "assistant",
+              content: response.data.res.text,
+            },
+          });
+        })
+        .catch((error) => {
+          console.log(error.response);
+          setDocQAError(error.response.data);
+        })
+        .finally(() => {
+          setDocQALoading(false);
+        });
     } catch (error) {
       console.log(error);
     }
@@ -50,7 +80,7 @@ const useLLMDocSum = () => {
 
   return {
     fetchDocQA,
-    docQAResponse,
+    docQALoading,
   };
 };
 

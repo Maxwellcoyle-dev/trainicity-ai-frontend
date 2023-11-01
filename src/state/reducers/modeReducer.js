@@ -8,7 +8,6 @@ const initialState = {
 const modeReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_MODE:
-      console.log("modeReducer action payload: ", action.payload);
       return { ...state, mode: action.payload };
     case SET_MODEL:
       return { ...state, model: action.payload };

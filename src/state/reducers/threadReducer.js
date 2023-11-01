@@ -97,12 +97,12 @@ const threadReducer = (state = initialState, action) => {
       const timeStamp = new Date().getTime().toString();
 
       // Check if a message array exists in the currentThread object
-      if (!state.currentThread.messages) {
+      if (state.currentThread.messages < 1 || !state.currentThread.messages) {
         const newMessageArray = [
           {
             role: action.payload.role,
             content: action.payload.content,
-            messageID: action.payload.messageID,
+            messageID: uuidv4(),
           },
         ];
 
